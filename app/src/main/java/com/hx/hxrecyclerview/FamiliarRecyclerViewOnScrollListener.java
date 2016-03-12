@@ -5,11 +5,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 
-/**
- * Familiar OnScrollListener
- * Created by iWgang on 15/11/13.
- * https://github.com/iwgang/FamiliarRecyclerView
- */
 public abstract class FamiliarRecyclerViewOnScrollListener extends RecyclerView.OnScrollListener {
     private LinearLayoutManager mLinearLayoutManager;
     private GridLayoutManager mGridLayoutManager;

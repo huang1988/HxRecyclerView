@@ -20,6 +20,7 @@ import java.util.List;
  */
 public class TestActivity extends AppCompatActivity {
     public List<String> list = new ArrayList<>();
+    public RecyclerView.LayoutManager layoutManager;
     private Handler myHandler =  new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -43,7 +44,7 @@ public class TestActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
 
         list.addAll(getDatas());
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setLayoutManager(layoutManager = new LinearLayoutManager(this));
 //        recyclerView.setLayoutManager(new GridLayoutManager(this,3));
         recyclerView.setAdapter(adapter = new MyAdapter(this,list,recyclerView));
 
@@ -71,10 +72,11 @@ public class TestActivity extends AppCompatActivity {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                recyclerView.setKeepScreenOn(false);
+                adapter.setLoadMore(false);
                 myHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
+                        adapter.setLoadMore(true);
                         list.clear();
                         list.addAll(getDatas());
                         adapter.notifyDataSetChanged();
