@@ -1,10 +1,12 @@
 package com.hx.hxrecyclerview;
 
 import android.content.Context;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import java.util.List;
 /**
  * @Description描述:通用RecyclerViewAdapter抽象类
@@ -22,7 +24,8 @@ public abstract class BaseRecyclerViewAdapter<T> extends RecyclerView.Adapter<Re
     public static final int NORMAL = 2;
     private boolean loading = false;
     private boolean isLoadMore = true;
-
+    private GridLayoutManager gridManager;
+    private int footView_temp = 0 ;
 
     public BaseRecyclerViewAdapter(Context context, List list, int itemLayoutId) {
         this.context = context;
@@ -50,6 +53,9 @@ public abstract class BaseRecyclerViewAdapter<T> extends RecyclerView.Adapter<Re
                 if (isLoadMore) {
                     if (!loading) {
                         if (mOnLoadMoreListener != null) {
+                            list.add(null);
+                            footView_temp = list.size()-1;
+                            notifyItemInserted(footView_temp);
                             mOnLoadMoreListener.loadMore();
                         }
                         loading = true;
@@ -157,5 +163,30 @@ public abstract class BaseRecyclerViewAdapter<T> extends RecyclerView.Adapter<Re
     /*加载更多监听的接口*/
     public interface OnLoadMoreListener {
         void loadMore();
+    }
+
+    /*设置recyclerView的Item跨度*/
+    @Override
+    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+        RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
+        if (manager instanceof GridLayoutManager) {
+            gridManager = ((GridLayoutManager) manager);
+            GridSpanSizeLookup mGridSpanSizeLookup = null;
+            if (mGridSpanSizeLookup == null) {
+                mGridSpanSizeLookup = new GridSpanSizeLookup();
+            }
+            gridManager.setSpanSizeLookup(mGridSpanSizeLookup);
+        }
+    }
+
+    class GridSpanSizeLookup extends GridLayoutManager.SpanSizeLookup {
+        @Override
+        public int getSpanSize(int position) {
+            if (null == list.get(position)) {
+                return gridManager.getSpanCount();//如果是底部加载view则为整行
+            }
+            return 1;
+        }
     }
 }

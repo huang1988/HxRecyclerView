@@ -6,7 +6,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.TextView;
 
@@ -44,8 +44,8 @@ public class TestActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
 
         list.addAll(getDatas());
-        recyclerView.setLayoutManager(layoutManager = new LinearLayoutManager(this));
-//        recyclerView.setLayoutManager(new GridLayoutManager(this,3));
+//        recyclerView.setLayoutManager(layoutManager = new LinearLayoutManager(this));
+        recyclerView.setLayoutManager(new GridLayoutManager(this,3));
         recyclerView.setAdapter(adapter = new MyAdapter(this,list,recyclerView));
 
         //设置上拉加载
@@ -53,8 +53,6 @@ public class TestActivity extends AppCompatActivity {
         adapter.addOnLoadMoreListener(new BaseRecyclerViewAdapter.OnLoadMoreListener() {
             @Override
             public void loadMore() {
-                adapter.list.add(null);
-                adapter.notifyItemInserted(adapter.list.size()-1);
                 myHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -68,7 +66,7 @@ public class TestActivity extends AppCompatActivity {
             }
         });
 
-        //设置下来刷新
+        //设置下拉刷新
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
